@@ -33,8 +33,6 @@ def make_dataset_kaggle(dir, max_dataset_size=float("inf")):
 
 def make_dataset_kaggle(monet=False):
     train_feature_description = {
-    'class': tf.io.FixedLenFeature([], tf.int64),
-    'id': tf.io.FixedLenFeature([], tf.string),
     'image': tf.io.FixedLenFeature([], tf.string),
     }
     extension = "tfrec.zip"
@@ -58,7 +56,7 @@ def make_dataset_kaggle(monet=False):
           train_image_dataset = train_image_dataset.map(_parse_image_function)
           images = [image_features['image'].numpy() for image_features in train_image_dataset]
           train_images = train_images + images
-      else:
+    else:
         for item in os.listdir('/content/CUT/kaggle_dataset/'): # loop through items in dir
             if item.endswith('tfrec.zip') and item.startswith('photo'): # check for "148.tfrec.zip" extension
                 file_name = os.path.abspath(item) # get full path of files
