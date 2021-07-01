@@ -1,6 +1,7 @@
 import os.path
 from data.base_dataset import BaseDataset, get_transform
 from data.image_folder import make_dataset
+from data.kaggle_data import make_dataset_kaggle
 from PIL import Image
 import random
 import util.util as util
@@ -17,23 +18,20 @@ class UnalignedDataset(BaseDataset):
     '/path/to/data/testA' and '/path/to/data/testB' during test time.
     """
 
-    def __init__(self, opt):
+    def __init__(self, opt,):
         """Initialize this dataset class.
 
         Parameters:
             opt (Option class) -- stores all the experiment flags; needs to be a subclass of BaseOptions
         """
         BaseDataset.__init__(self, opt)
-        self.dir_A = os.path.join(opt.dataroot, opt.phase + 'A')  # create a path '/path/to/data/trainA'
-        self.dir_B = os.path.join(opt.dataroot, opt.phase + 'B')  # create a path '/path/to/data/trainB'
-
         if opt.phase == "test" and not os.path.exists(self.dir_A) \
            and os.path.exists(os.path.join(opt.dataroot, "valA")):
             self.dir_A = os.path.join(opt.dataroot, "valA")
             self.dir_B = os.path.join(opt.dataroot, "valB")
 
-        self.A_paths = sorted(make_dataset(self.dir_A, opt.max_dataset_size))   # load images from '/path/to/data/trainA'
-        self.B_paths = sorted(make_dataset(self.dir_B, opt.max_dataset_size))    # load images from '/path/to/data/trainB'
+        self.A_paths = sorted(make_dataset_kaggle(True))   # load images from '/path/to/data/trainA'
+        self.B_paths = sorted(make_dataset_kaggle(False))    # load images from '/path/to/data/trainB'
         self.A_size = len(self.A_paths)  # get the size of dataset A
         self.B_size = len(self.B_paths)  # get the size of dataset B
 
@@ -55,8 +53,8 @@ class UnalignedDataset(BaseDataset):
         else:   # randomize the index for domain B to avoid fixed pairs.
             index_B = random.randint(0, self.B_size - 1)
         B_path = self.B_paths[index_B]
-        A_img = Image.open(A_path).convert('RGB')
-        B_img = Image.open(B_path).convert('RGB')
+        A_img = Image.open(io.BytesIO(A_path)).convert('RGB')
+        B_img = Image.open(io.BytesIO(B_path)).convert('RGB')
 
         # Apply image transformation
         # For FastCUT mode, if in finetuning phase (learning rate is decaying),
