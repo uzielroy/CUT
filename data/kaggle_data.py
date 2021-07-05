@@ -18,6 +18,8 @@ def is_image_file(filename):
     return any(filename.endswith(extension) for extension in IMG_EXTENSIONS)
 
 def _parse_image_function(example_proto):
+ train_feature_description = {'image': tf.io.FixedLenFeature([], tf.string),
+ } 
  return tf.io.parse_single_example(example_proto, train_feature_description)
 
 def make_dataset_kaggle(dir, max_dataset_size=float("inf")):
@@ -37,7 +39,7 @@ def make_dataset_kaggle(monet=False):
     }
     extension = "tfrec.zip"
     if monet:
-        for item in os.listdir('/content/CUT/kaggle_dataset/'): # loop through items in dir
+        for item in os.listdir('/content/CUT/kaggle_dataset/monet'): # loop through items in dir
             if item.endswith('tfrec.zip') and item.startswith('monet'): # check for "148.tfrec.zip" extension
                 file_name = os.path.abspath(item) # get full path of files
                 zip_ref = zipfile.ZipFile(file_name) # create zipfile object
@@ -57,7 +59,7 @@ def make_dataset_kaggle(monet=False):
           images = [image_features['image'].numpy() for image_features in train_image_dataset]
           train_images = train_images + images
     else:
-        for item in os.listdir('/content/CUT/kaggle_dataset/'): # loop through items in dir
+        for item in os.listdir('/content/CUT/kaggle_dataset/photo'): # loop through items in dir
             if item.endswith('tfrec.zip') and item.startswith('photo'): # check for "148.tfrec.zip" extension
                 file_name = os.path.abspath(item) # get full path of files
                 zip_ref = zipfile.ZipFile(file_name) # create zipfile object
@@ -77,7 +79,7 @@ def make_dataset_kaggle(monet=False):
           images = [image_features['image'].numpy() for image_features in train_image_dataset]
           train_images = train_images + images
 
-    return train_files
+    return train_images
 
 
 
@@ -113,3 +115,4 @@ class ImageFolder(data.Dataset):
 
     def __len__(self):
         return len(self.imgs)
+
