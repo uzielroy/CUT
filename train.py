@@ -15,7 +15,7 @@ from utils import ReplayBuffer
 from utils import LambdaLR
 from utils import Logger
 from utils import weights_init_normal
-from datasets import ImageDataset
+from datasets import ImageDataset_kaggle
 from DiffAugment_pytorch import DiffAugment
 
 
@@ -87,7 +87,7 @@ transforms_ = [ transforms.Resize(int(opt.size*1.12), Image.BICUBIC),
                 transforms.RandomHorizontalFlip(),
                 transforms.ToTensor(),
                 transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)) ]
-dataloader = DataLoader(ImageDataset(opt.dataroot, transforms_=transforms_, unaligned=True),
+dataloader = DataLoader(ImageDataset_kaggle(opt.dataroot, transforms_=transforms_, unaligned=True),
                         batch_size=opt.batchSize, shuffle=True, num_workers=opt.n_cpu)
 
 # Loss plot
