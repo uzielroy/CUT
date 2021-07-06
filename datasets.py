@@ -7,7 +7,7 @@ import io
 from torch.utils.data import Dataset
 from PIL import Image
 import torchvision.transforms as transforms
-
+from utils import images_pca
 class ImageDataset(Dataset):
     def __init__(self, root, transforms_=None, unaligned=False, mode='train'):
         self.transform = transforms.Compose(transforms_)
@@ -40,12 +40,12 @@ class ImageDataset_kaggle(Dataset):
         self.files_B = sorted(glob.glob(os.path.join(root, '%s/B' % mode) + '/*.*'))
 
     def __getitem__(self, index):
-        item_A = self.transform(io.BytesIO(self.files_A[index % len(self.files_A)]))
+        item_A = self.transform(Image.open(io.BytesIO(self.files_A[index % len(self.files_A)])).convert('RGB'))
 
         if self.unaligned:
-            item_B = self.transform(io.BytesIO(self.files_B[random.randint(0, len(self.files_B) - 1)]).convert('RGB'))
+            item_B = self.transform(Image.open(io.BytesIO(self.files_B[random.randint(0, len(self.files_B) - 1)])).convert('RGB'))
         else:
-            item_B = self.transform(io.BytesIO(self.files_B[index % len(self.files_B)]).convert('RGB'))
+            item_B = self.transform(Image.open(io.BytesIO(self.files_B[index % len(self.files_B)])).convert('RGB'))
 
         return {'A': item_A, 'B': item_B}
 
@@ -78,6 +78,7 @@ def make_dataset_kaggle(path,monet=False):
           train_image_dataset = train_image_dataset.map(_parse_image_function)
           images = [image_features['image'].numpy() for image_features in train_image_dataset]
           train_images = train_images + images
+          train_images = images_pca(images)
     else:
         for item in os.listdir(os.path.join(path,'photo/*.tfrec')): # loop through items in dir
             if item.endswith('tfrec.zip') and item.startswith('photo'): # check for "148.tfrec.zip" extension

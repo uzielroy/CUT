@@ -7,6 +7,10 @@ from torch.autograd import Variable
 import torch
 from visdom import Visdom
 import numpy as np
+from sklearn.decomposition import PCA
+import torchvision.transforms as transforms
+from PIL import Image
+import io
 
 def tensor2image(tensor):
     image = 127.5*(tensor[0].cpu().float().numpy() + 1.0)
@@ -46,7 +50,7 @@ class Logger():
                 sys.stdout.write('%s: %.4f | ' % (loss_name, self.losses[loss_name]/self.batch))
 
         batches_done = self.batches_epoch*(self.epoch - 1) + self.batch
-        batches_left = self.batches_epoch*(self.n_epochs - self.epoch) + self.batches_epoch - self.batch 
+        batches_left = self.batches_epoch*(self.n_epochs - self.epoch) + self.batches_epoch - self.batch
         sys.stdout.write('ETA: %s' % (datetime.timedelta(seconds=batches_left*self.mean_period/batches_done)))
 
         # Draw images
@@ -61,7 +65,7 @@ class Logger():
             # Plot losses
             for loss_name, loss in self.losses.items():
                 if loss_name not in self.loss_windows:
-                    self.loss_windows[loss_name] = self.viz.line(X=np.array([self.epoch]), Y=np.array([loss/self.batch]), 
+                    self.loss_windows[loss_name] = self.viz.line(X=np.array([self.epoch]), Y=np.array([loss/self.batch]),
                                                                     opts={'xlabel': 'epochs', 'ylabel': loss_name, 'title': loss_name})
                 else:
                     self.viz.line(X=np.array([self.epoch]), Y=np.array([loss/self.batch]), win=self.loss_windows[loss_name], update='append')
@@ -74,7 +78,7 @@ class Logger():
         else:
             self.batch += 1
 
-        
+
 
 class ReplayBuffer():
     def __init__(self, max_size=50):
@@ -116,3 +120,32 @@ def weights_init_normal(m):
         torch.nn.init.normal(m.weight.data, 1.0, 0.02)
         torch.nn.init.constant(m.bias.data, 0.0)
 
+def calc_distances(p0, points):
+    return ((p0 - points)**2).sum(axis=1)
+
+def graipher(pts, K):
+    idx_pts = []
+    farthest_pts = np.zeros((K, 2))
+    farthest_pts[0] = pts[np.random.randint(len(pts))]
+    distances = calc_distances(farthest_pts[0], pts)
+    for i in range(1, K):
+        max_idx = np.argmax(distances)
+        farthest_pts[i] = pts[max_idx]
+        idx_pts.append(max_idx)
+        distances = np.minimum(distances, calc_distances(farthest_pts[i], pts))
+    return farthest_pts, np.array(max_idx)
+
+
+def images_pca(images,k=30):
+    resize = transforms.Resize(256)
+    data = np.zeros((len(images),256*256))
+    idx = 0
+    for img in images:
+        data[idx] = np.array(resize(Image.open(io.BytesIO(i))).convert('LA')).reshape(1,-1)
+        idx = idx+1
+    pca = PCA(2)
+    converted_data = pca.fit_transform(data)
+    pts,indices = graipher(converted_data,k)
+    reduced_images = images[indices]
+    print(len(reduced_images))
+    return reduced_images
