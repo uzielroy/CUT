@@ -124,18 +124,18 @@ def calc_distances(p0, points):
     return ((p0 - points)**2).sum(axis=1)
 
 def graipher(pts, K):
-    idx_pts = []
+    idx_pts = np.zeros(K)
     farthest_pts = np.zeros((K, 2))
     rand_idx = np.random.randint(len(pts))
     farthest_pts[0] = pts[rand_idx]
-    idx_pts.append(rand_idx)
+    idx_pts[0]=rand_idx
     distances = calc_distances(farthest_pts[0], pts)
     for i in range(1, K):
         max_idx = np.argmax(distances)
         farthest_pts[i] = pts[max_idx]
-        idx_pts.append(max_idx)
+        idx_pts[i] = max_idx
         distances = np.minimum(distances, calc_distances(farthest_pts[i], pts))
-    return farthest_pts, np.array(idx_pts)
+    return farthest_pts, idx_pts.astype(int)
 
 
 def images_pca(images,k=30):
@@ -148,6 +148,7 @@ def images_pca(images,k=30):
     pca = PCA(2)
     converted_data = pca.fit_transform(data)
     pts,indices = graipher(converted_data,k)
-    reduced_images = images[indices]
+    print(indices)
+    reduced_images = list(np.array(images)[indices])
     print(len(reduced_images))
     return reduced_images
