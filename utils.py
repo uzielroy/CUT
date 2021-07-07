@@ -20,7 +20,7 @@ def tensor2image(tensor):
 
 class Logger():
     def __init__(self, n_epochs, batches_epoch):
-        self.viz = Visdom()
+        self.viz = Visdom(port='6006',log_to_filename='./visdom_output_file.log')
         self.n_epochs = n_epochs
         self.batches_epoch = batches_epoch
         self.epoch = 1
@@ -40,9 +40,9 @@ class Logger():
 
         for i, loss_name in enumerate(losses.keys()):
             if loss_name not in self.losses:
-                self.losses[loss_name] = losses[loss_name].data[0]
+                self.losses[loss_name] = losses[loss_name].item()
             else:
-                self.losses[loss_name] += losses[loss_name].data[0]
+                self.losses[loss_name] += losses[loss_name].item()
 
             if (i+1) == len(losses.keys()):
                 sys.stdout.write('%s: %.4f -- ' % (loss_name, self.losses[loss_name]/self.batch))
