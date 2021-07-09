@@ -11,6 +11,7 @@ from sklearn.decomposition import PCA
 import torchvision.transforms as transforms
 from PIL import Image
 import io
+from torch.utils.tensorboard import SummaryWriter
 
 def tensor2image(tensor):
     image = 127.5*(tensor[0].cpu().float().numpy() + 1.0)
@@ -20,7 +21,7 @@ def tensor2image(tensor):
 
 class Logger():
     def __init__(self, n_epochs, batches_epoch):
-        self.viz = Visdom(port='6006',log_to_filename='./visdom_output_file.log')
+        self.writer = SummaryWriter()
         self.n_epochs = n_epochs
         self.batches_epoch = batches_epoch
         self.epoch = 1
@@ -31,8 +32,14 @@ class Logger():
         self.loss_windows = {}
         self.image_windows = {}
 
+    def log_board(loss,images):
+        for i, loss_name in enumerate(losses.keys()):
+            self.writer.add_scalar('Loss/'+str(loss_name), losses[loss_name].item(), self.batch+(self.batches_epoch*(self.epoch-1)))
+        if self.batch%100==0:
+            for image_name, tensor in images.items():
+                self.writer.add_image(image_name,tensor2image(tensor.data),self.batch+(self.batches_epoch*(self.epoch-1)))
 
-    def log(self, losses=None, images=None):
+    def log(self, n_iter, losses=None, images=None):
         self.mean_period += (time.time() - self.prev_time)
         self.prev_time = time.time()
 

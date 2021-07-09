@@ -93,9 +93,9 @@ dataloader = DataLoader(ImageDataset_kaggle(opt.dataroot, transforms_=transforms
 # Loss plot
 logger = Logger(opt.n_epochs, len(dataloader))
 ###################################
-
+from tqdm import tqdm
 ###### Training ######
-for epoch in range(opt.epoch, opt.n_epochs):
+for epoch in tqdm(range(opt.epoch, opt.n_epochs)):
     for i, batch in enumerate(dataloader):
         # Set model input
         real_A = Variable(input_A.copy_(batch['A']))
