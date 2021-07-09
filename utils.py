@@ -157,5 +157,12 @@ def images_pca(images,k=30):
     pts,indices = graipher(converted_data,k)
     print(indices)
     reduced_images = list(np.array(images)[indices])
+    save_reduced_images(reduced_images)
     print(len(reduced_images))
     return reduced_images
+
+def save_reduced_images(images):
+    os.makedirs('/content/Pnina/MyDrive/CUT/kaggle_dataset/monet_reduced', exist_ok=True)
+    i = 0
+    for img in images:
+        Image.open(io.BytesIO(img)).convert('RGB')).save('/content/Pnina/MyDrive/CUT/kaggle_dataset/monet_reduced/'+i.zfill(3),'png')

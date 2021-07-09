@@ -54,6 +54,27 @@ class ImageDataset_kaggle(Dataset):
     def __len__(self):
         return max(len(self.files_A), len(self.files_B))
 
+class ImageDataset_mix(Dataset):
+    def __init__(self, root, transforms_=None, unaligned=False, mode='train'):
+        self.transform = transforms.Compose(transforms_)
+        self.unaligned = unaligned
+
+        self.files_A = sorted(make_dataset_kaggle(root,False))
+        self.files_B = sorted(glob.glob(os.path.join('/content/Pnina/MyDrive/CUT/kaggle_dataset/monet_reduced' + '/*.*'))
+
+    def __getitem__(self, index):
+        item_A = self.transform(Image.open(io.BytesIO(self.files_A[index % len(self.files_A)])).convert('RGB'))
+
+        if self.unaligned:
+            item_B = self.transform(Image.open(self.files_B[random.randint(0, len(self.files_B) - 1)]).convert('RGB'))
+        else:
+            item_B = self.transform(Image.open(self.files_B[index % len(self.files_B)]).convert('RGB'))
+
+        return {'A': item_A, 'B': item_B}
+
+    def __len__(self):
+        return max(len(self.files_A), len(self.files_B))
+
 
 def make_dataset_kaggle(path,monet=False):
     train_feature_description = {
@@ -124,6 +145,8 @@ def make_dataset_kaggle(path,monet=False):
           train_images = train_images + images
 
     return train_images
+
+
 
 
 def _parse_image_function(example_proto):

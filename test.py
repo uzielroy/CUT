@@ -11,7 +11,7 @@ from torch.autograd import Variable
 import torch
 
 from models import Generator
-from datasets import ImageDataset
+from datasets import ImageDataset_mix
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--batchSize', type=int, default=1, help='size of the batches')
@@ -54,7 +54,7 @@ input_B = Tensor(opt.batchSize, opt.output_nc, opt.size, opt.size)
 # Dataset loader
 transforms_ = [ transforms.ToTensor(),
                 transforms.Normalize((0.5,0.5,0.5), (0.5,0.5,0.5)) ]
-dataloader = DataLoader(ImageDataset(opt.dataroot, transforms_=transforms_, mode='test'), 
+dataloader = DataLoader(ImageDataset_mix(opt.dataroot, transforms_=transforms_, mode='test'),
                         batch_size=opt.batchSize, shuffle=False, num_workers=opt.n_cpu)
 ###################################
 
