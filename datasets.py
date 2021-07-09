@@ -60,7 +60,7 @@ class ImageDataset_mix(Dataset):
         self.unaligned = unaligned
 
         self.files_A = sorted(make_dataset_kaggle(root,False))
-        self.files_B = sorted(glob.glob(os.path.join('/content/Pnina/MyDrive/CUT/kaggle_dataset/monet_reduced' + '/*.*'))
+        self.files_B = sorted(glob.glob(os.path.join('/content/Pnina/MyDrive/CUT/kaggle_dataset/monet_reduced' + '/*.*')))
 
     def __getitem__(self, index):
         item_A = self.transform(Image.open(io.BytesIO(self.files_A[index % len(self.files_A)])).convert('RGB'))

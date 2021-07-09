@@ -9,6 +9,7 @@ from torchvision.utils import save_image
 from torch.utils.data import DataLoader
 from torch.autograd import Variable
 import torch
+from tqdm import tqdm
 
 from models import Generator
 from datasets import ImageDataset_mix
@@ -66,7 +67,7 @@ if not os.path.exists('output/A'):
 if not os.path.exists('output/B'):
     os.makedirs('output/B')
 
-for i, batch in enumerate(dataloader):
+for i, batch in tqdm(enumerate(dataloader)):
     # Set model input
     real_A = Variable(input_A.copy_(batch['A']))
     real_B = Variable(input_B.copy_(batch['B']))

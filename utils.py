@@ -2,7 +2,7 @@ import random
 import time
 import datetime
 import sys
-
+import os
 from torch.autograd import Variable
 import torch
 from visdom import Visdom
@@ -32,7 +32,7 @@ class Logger():
         self.loss_windows = {}
         self.image_windows = {}
 
-    def log_board(loss,images):
+    def log_board(self,losses,images):
         for i, loss_name in enumerate(losses.keys()):
             self.writer.add_scalar('Loss/'+str(loss_name), losses[loss_name].item(), self.batch+(self.batches_epoch*(self.epoch-1)))
         if self.batch%100==0:
@@ -165,4 +165,5 @@ def save_reduced_images(images):
     os.makedirs('/content/Pnina/MyDrive/CUT/kaggle_dataset/monet_reduced', exist_ok=True)
     i = 0
     for img in images:
-        Image.open(io.BytesIO(img)).convert('RGB')).save('/content/Pnina/MyDrive/CUT/kaggle_dataset/monet_reduced/'+i.zfill(3),'png')
+        Image.open(io.BytesIO(img)).convert('RGB').save('/content/Pnina/MyDrive/CUT/kaggle_dataset/monet_reduced/'+str(i).zfill(3)+'.png')
+        i=i+1
