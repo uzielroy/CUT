@@ -38,7 +38,12 @@ class Logger():
         if self.batch%100==0:
             for image_name, tensor in images.items():
                 self.writer.add_image(image_name,tensor2image(tensor.data),self.batch+(self.batches_epoch*(self.epoch-1)))
-
+        # End of epoch
+        if (self.batch % self.batches_epoch) == 0:
+            self.epoch += 1
+            self.batch = 1
+        else:
+            self.batch +=1
     def log(self, n_iter, losses=None, images=None):
         self.mean_period += (time.time() - self.prev_time)
         self.prev_time = time.time()
