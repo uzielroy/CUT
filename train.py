@@ -96,7 +96,7 @@ logger = Logger(opt.n_epochs, len(dataloader))
 from tqdm import tqdm
 ###### Training ######
 for epoch in tqdm(range(opt.epoch, opt.n_epochs)):
-    for i, batch in enumerate(dataloader):
+    for i, batch in tqdm(enumerate(dataloader)):
         # Set model input
         real_A = Variable(input_A.copy_(batch['A']))
         real_B = Variable(input_B.copy_(batch['B']))
