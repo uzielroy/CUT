@@ -167,8 +167,8 @@ def images_pca(images,k=30):
     return reduced_images
 
 def save_reduced_images(images):
-    os.makedirs('/content/Pnina/MyDrive/CUT/kaggle_dataset/monet_reduced', exist_ok=True)
+    os.makedirs('/content/Pnina/MyDrive/Cycle_GAN/kaggle_dataset/monet_reduced', exist_ok=True)
     i = 0
     for img in images:
-        Image.open(io.BytesIO(img)).convert('RGB').save('/content/Pnina/MyDrive/CUT/kaggle_dataset/monet_reduced/'+str(i).zfill(3)+'.png')
+        Image.open(io.BytesIO(img)).convert('RGB').save('/content/Pnina/MyDrive/Cycle_GAN/kaggle_dataset/monet_reduced/'+str(i).zfill(3)+'.png')
         i=i+1

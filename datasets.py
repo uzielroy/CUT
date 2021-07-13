@@ -60,7 +60,7 @@ class ImageDataset_mix(Dataset):
         self.unaligned = unaligned
 
         self.files_A = sorted(make_dataset_kaggle(root,False))
-        self.files_B = sorted(glob.glob(os.path.join('/content/Pnina/MyDrive/CUT/kaggle_dataset/monet_reduced' + '/*.*')))
+        self.files_B = sorted(glob.glob(os.path.join('/content/Pnina/MyDrive/Cycle_GAN/kaggle_dataset/monet_reduced' + '/*.*')))
 
     def __getitem__(self, index):
         item_A = self.transform(Image.open(io.BytesIO(self.files_A[index % len(self.files_A)])).convert('RGB'))
@@ -82,11 +82,11 @@ def make_dataset_kaggle(path,monet=False):
     }
     extension = "tfrec.zip"
     if monet:
-        for item in os.listdir('/content/Pnina/MyDrive/CUT/kaggle_dataset/'): # loop through items in dir
+        for item in os.listdir('/content/Pnina/MyDrive/Cycle_GAN/kaggle_dataset/'): # loop through items in dir
             if item.endswith('tfrec.zip') and item.startswith('monet'): # check for "148.tfrec.zip" extension
                 file_name = file_name = os.path.join(path,item) # get full path of files
                 zip_ref = zipfile.ZipFile(file_name) # create zipfile object
-                zip_ref.extractall('/content/Pnina/MyDrive/CUT/kaggle_dataset/monet') # extract file to dir
+                zip_ref.extractall('/content/Pnina/MyDrive/Cycle_GAN/kaggle_dataset/monet') # extract file to dir
                 zip_ref.close() # close file
         for item in os.listdir(os.path.join(path,'monet')):
             if item.endswith('tfrec.zip') and item.startswith('monet'):
@@ -112,11 +112,11 @@ def make_dataset_kaggle(path,monet=False):
         print("THEREEE:", len(train_images))
 
     else:
-        for item in os.listdir('/content/Pnina/MyDrive/CUT/kaggle_dataset/'): # loop through items in dir
+        for item in os.listdir('/content/Pnina/MyDrive/Cycle_GAN/kaggle_dataset/'): # loop through items in dir
             if item.endswith('tfrec.zip') and item.startswith('photo'): # check for "148.tfrec.zip" extension
                 file_name = file_name = os.path.join(path,item) # get full path of files
                 zip_ref = zipfile.ZipFile(file_name) # create zipfile object
-                zip_ref.extractall('/content/Pnina/MyDrive/CUT/kaggle_dataset/photo') # extract file to dir
+                zip_ref.extractall('/content/Pnina/MyDrive/Cycle_GAN/kaggle_dataset/photo') # extract file to dir
                 zip_ref.close() # close file
         for item in os.listdir(os.path.join(path,'photo')):
             if item.endswith('tfrec.zip') and item.startswith('photo'):
