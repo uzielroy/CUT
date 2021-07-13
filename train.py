@@ -32,6 +32,7 @@ parser.add_argument('--input_nc', type=int, default=3, help='number of channels 
 parser.add_argument('--output_nc', type=int, default=3, help='number of channels of output data')
 parser.add_argument('--cuda', action='store_true', help='use GPU computation')
 parser.add_argument('--n_cpu', type=int, default=8, help='number of cpu threads to use during batch generation')
+parser.add_argument('--lambda_cycle', type=int, default=10)
 opt = parser.parse_args()
 print(opt)
 
@@ -123,10 +124,10 @@ for epoch in tqdm(range(opt.epoch, opt.n_epochs)):
 
         # Cycle loss
         recovered_A = netG_B2A(fake_B)
-        loss_cycle_ABA = criterion_cycle(recovered_A, real_A)*10.0
+        loss_cycle_ABA = criterion_cycle(recovered_A, real_A)*opt.lambda_cycle
 
         recovered_B = netG_A2B(fake_A)
-        loss_cycle_BAB = criterion_cycle(recovered_B, real_B)*10.0
+        loss_cycle_BAB = criterion_cycle(recovered_B, real_B)*opt.lambda_cycle
 
         # Total loss
         loss_G = loss_identity_A + loss_identity_B + loss_GAN_A2B + loss_GAN_B2A + loss_cycle_ABA + loss_cycle_BAB

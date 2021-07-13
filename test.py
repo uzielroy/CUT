@@ -66,6 +66,9 @@ if not os.path.exists('output/A'):
     os.makedirs('output/A')
 if not os.path.exists('output/B'):
     os.makedirs('output/B')
+if not os.path.exists('output/B_reduced'):
+    os.makedirs('output/B_reduced')
+
 
 for i, batch in tqdm(enumerate(dataloader)):
     # Set model input
@@ -79,6 +82,8 @@ for i, batch in tqdm(enumerate(dataloader)):
     # Save image files
     save_image(fake_A, 'output/A/%04d.png' % (i+1))
     save_image(fake_B, 'output/B/%04d.png' % (i+1))
+    if(i<30)
+        save_image(fake_B, 'output/B_reduced/%04d.png' % (i+1))
 
     sys.stdout.write('\rGenerated images %04d of %04d' % (i+1, len(dataloader)))
 
